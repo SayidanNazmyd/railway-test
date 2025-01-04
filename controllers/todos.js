@@ -46,20 +46,32 @@ exports.getTodo = async(req, res) => {
   }
 };
 
-exports.deleteTodo = async(req, res) => { 
+exports.deleteTodo = async (req, res) => {
   try {
-    const todo= await Todo.findById(req.params.id);
-    if (!todo) {
-      return res.status(404).json({ message: "Not found " })
+    // Menggunakan findByIdAndDelete sebagai pengganti remove()
+    const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
+
+    // Cek apakah todo ditemukan
+    if (!deletedTodo) {
+      return res.status(404).json({
+        success: false,
+        message: "Todo tidak ditemukan",
+      });
     }
-    todo.remove();
+
+    // Kirim response sukses
     res.status(200).json({
-      message: "success",
-      data: {}
-    })
-  }catch(err){
-    console.error(err.message);
-    res.status(500).send('Server Error');
+      success: true,
+      message: "Todo berhasil dihapus",
+      data: deletedTodo,
+    });
+  } catch (err) {
+    console.error("Error saat menghapus todo:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Terjadi kesalahan saat menghapus todo",
+      error: err.message,
+    });
   }
 };
 
