@@ -13,16 +13,20 @@ exports.getTodos = async(req, res) => {
   }
 }
 
-exports.createTodo= async(req, res) => {   
+exports.createTodo = async (req, res) => {
   try {
-    const todo = await Todo.create(req.body)
+    const todo = await Todo.create({
+      title: req.body.title,
+      user: req.user.id, 
+    });
+
     res.status(200).json({
       message: "success",
-      data: todo
-    })
-  }catch(err){
+      data: todo,
+    });
+  } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
 
